@@ -9,8 +9,8 @@ sed -i s/demo2/${CHAT_ID}/g telegram-send.conf
 mv telegram-send.conf $HOME/telegram-send.conf
 cd $HOME
 
-git clone -q --depth=1 https://github.com/mvaisakh/gcc-arm64 gcc-arm64
-git clone -q --depth=1 https://github.com/mvaisakh/gcc-arm gcc-arm32
+git clone -q --depth=1 https://github.com/mvaisakh/gcc-arm64 -b gcc-new gcc-arm64
+git clone -q --depth=1 https://github.com/mvaisakh/gcc-arm -b gcc-new gcc-arm32
 echo Successfully Cloned Toolchain
 
 git clone -q --depth=1 https://github.com/Divyanshu-Modi/AnyKernel3 Repack
