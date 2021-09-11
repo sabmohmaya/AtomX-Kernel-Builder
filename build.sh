@@ -6,8 +6,8 @@
 	USER='OGIndian'
 	HOST="$(uname -n)"
 	VERSION='5.0'
-	DEVICENAME='Redmi Note 6 Pro'
-	DEVICE='tulip'
+	DEVICENAME='Mi A2'
+	DEVICE='wayne'
 	CAM_LIB=''
 	KERNEL_DIR="$HOME/Kernel"
 	ZIP_DIR="$HOME/Repack"
