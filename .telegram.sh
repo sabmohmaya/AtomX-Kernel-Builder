@@ -1,3 +1,3 @@
 [telegram]
-token = demo1
-chat_id = demo2
+TELEGRAM_TOKEN = demo1
+TELEGRAM_CHAT = demo2
