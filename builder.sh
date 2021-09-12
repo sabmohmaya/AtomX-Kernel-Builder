@@ -11,7 +11,7 @@ git clone https://github.com/RahifM/android_kernel_xiaomi_msm8953/ -b staging/LA
 git clone https://github.com/AOSPA/android_prebuilts_gcc_linux-x86_arm_arm-eabi -b master --depth 1 $HOME/android/gcc-arm32
 git clone https://github.com/AOSPA/android_prebuilts_gcc_linux-x86_aarch64_aarch64-elf -b master --depth 1 $HOME/android/gcc-arm64
 
-git clone https://github.com/fabianonline/telegram.sh $HOME
+git clone https://github.com/fabianonline/telegram.sh $HOME/telegram.sh
 #wget https://raw.githubusercontent.com/RahifM/local_manifests/tgtoken/.telegram.sh 
 #bash ~/tele*/tele* "Tgsh integration test - username: $(whoami)"
 
