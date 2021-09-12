@@ -17,7 +17,7 @@ git clone https://github.com/fabianonline/telegram.sh $HOME
 
 
 #	mkdir $HOME/.config
-	mv telegram-send.conf $HOME/.telegram.sh
+	mv .telegram.sh $HOME/.telegram.sh
 	sed -i s/demo1/${BOT_API_KEY}/g $HOME/.telegram.sh
 	sed -i s/demo2/${CHAT_ID}/g $HOME/.telegram.sh
 bash ~/tele*/tele* "Tgsh integration test - username: $(whoami)"
