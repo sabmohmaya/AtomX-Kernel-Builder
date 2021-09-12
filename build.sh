@@ -1,131 +1,122 @@
-# SPDX-License-Identifier: GPL-3.0
-# Copyright (c) 2021, Divyanshu-Modi <divyan.m05@gmail.com>
-#bin/#!/bin/bash
+#!/bin/bash
+#
+# Copyright (C) 2017 Ashish Malik (im.ashish994@gmail.com)
+# Copyright (C) 2018-2021 Rahif M (rahifmanjatha372@gmail.com)
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-	COMPILER="$1"
-	USER='OGIndian'
-	HOST="$(uname -n)"
-	VERSION='5.0'
-	DEVICENAME='Mi A2'
-	DEVICE='wayne'
-	CAM_LIB=''
-	KERNEL_DIR="$HOME/Kernel"
-	ZIP_DIR="$HOME/Repack"
-	AKSH="$ZIP_DIR/anykernel.sh"
-	DFCF="AtomX-$DEVICE${CAM_LIB}_defconfig"
-	if [[ ! -f $KERNEL_DIR/arch/arm64/configs/$DFCF ]]; then
-		DFCF="$DEVICE${CAM_LIB}-perf_defconfig"
-		if [[ ! -f $KERNEL_DIR/arch/arm64/configs/$DFCF ]]; then
-			DFCF="$DEVICE${CAM_LIB}_defconfig"
-        fi
-	fi
-	CONFIG="$KERNEL_DIR/arch/arm64/configs/$DFCF"
-	mkdir $COMPILER
+#colors
+red='\033[0;31m'
+green='\033[0;32m'
+brown='\033[0;33m'
+blue='\033[0;34m'
+purple='\033[1;35m'
+cyan='\033[0;36m'
+nc='\033[0m'
 
-# Set variables
-	if [[ "$COMPILER" == "CLANG" ]]; then
-		CC='clang'
-		HOSTCC='clang'
-		HOSTCXX='clang++'
-		C_PATH="$HOME/clang"
-		CC_64='aarch64-linux-gnu-'
-		CC_COMPAT='arm-linux-gnueabi-'
-	elif [[ "$COMPILER" == "GCC" ]]; then
-		HOSTCC='gcc'
-		CC_64='aarch64-elf-'
-		CC='aarch64-elf-gcc'
-		C_PATH="$HOME/gcc-arm64"
-		HOSTCXX='aarch64-elf-g++'
-		CC_COMPAT="$HOME/gcc-arm32/bin/arm-eabi-"
-	fi
+#directories
+KERNEL_DIR=$HOME/mido
+KERN_IMG=$KERNEL_DIR/out/arch/arm64/boot/Image.gz-dtb
+ZIP_DIR=$KERNEL_DIR/AnyKernel2
+CONFIG_DIR=$KERNEL_DIR/arch/arm64/configs
+TELEGRAM=$HOME/telegram.sh/telegram
+ZIP=$KERNEL_DIR/AnyKernel2/*.zip
+LOG=$KERNEL_DIR/buildlog*.txt
 
-	muke() {
-		make O=$COMPILER $CFLAG ARCH=arm64 \
-		    $FLAG                          \
-			CC=$CC                         \
-			LLVM=1                         \
-			CROSS_COMPILE=$CC_64           \
-			$EXTRA_FLAGS                   \
-			HOSTLD=ld.lld                  \
-			HOSTCC=$HOSTCC                 \
-			HOSTCXX=$HOSTCXX               \
-			PATH=$C_PATH/bin:$PATH         \
-			KBUILD_BUILD_USER=$USER        \
-			KBUILD_BUILD_HOST=$HOST        \
-			CROSS_COMPILE_ARM32=$CC_COMPAT \
-			CROSS_COMPILE_COMPAT=$CC_COMPAT\
-			LD_LIBRARY_PATH=$C_PATH/lib:$LD_LIBRARY_PATH
-	}
+#export
+export CROSS_COMPILE="$HOME/android/gcc-arm64/bin/aarch64-elf-"
+#export CROSS_COMPILE="$HOME/android/du/prebuilts/gcc/linux-x86/aarch64/aarch64-elf/bin/aarch64-elf-"
+#export CROSS_COMPILE="$HOME/android/pa/prebuilts/gcc/linux-x86/aarch64/aarch64-elf/bin/aarch64-elf-"
 
-	BUILD_START=$(date +"%s")
+#misc
+CONFIG=mido_defconfig
+THREAD="-j$(grep -c ^processor /proc/cpuinfo)"
 
-#	if [[ "$COMPILER" == "CLANG" ]]; then
-#		sed -i '/CONFIG_JUMP_LABEL/ a CONFIG_LTO_CLANG=y' $CONFIG
-#		sed -i '/CONFIG_LTO_CLANG/ a # CONFIG_THINLTO is not set' $CONFIG
-#	elif [[ "$COMPILER" == "GCC" ]]; then
-#		sed -i '/CONFIG_JUMP_LABEL/ a CONFIG_LTO_GCC=y' $CONFIG
-#		sed -i '/CONFIG_JUMP_LABEL/ a CONFIG_OPTIMIZE_INLINING=y' $CONFIG
-#	fi
+#main script
+#while true; do
+#echo -e "\n$green[1]Build kernel"
+#echo -e "[2]Regenerate defconfig"
+#echo -e "[3]Source cleanup"
+#echo -e "[4]Quit$nc"
+#echo -ne "\n$blue(i)Please enter a choice[1-4]:$nc "
 
-	CFLAG=$DFCF
-	muke
+#read choice
 
-#	if [[ "$COMPILER" == "CLANG" ]]; then
-#		sed -i '/CONFIG_LTO_CLANG=y/d' $CONFIG
-#		sed -i '/# CONFIG_THINLTO is not set/d' $CONFIG
-#	elif [[ "$COMPILER" == "GCC" ]]; then
-#		sed -i '/CONFIG_LTO_GCC=y/d' $CONFIG
-#		sed -i '/CONFIG_OPTIMIZE_INLINING=y/d' $CONFIG
-#	fi
+#if [ "$choice" == "1" ]; then
+  BUILD_START=$(date +"%s")
+  DATE=`date`
+$TELEGRAM "Pwd: $(pwd)"$'\n'$'\n'"Branch: $(git branch --show-current)"$'\n'$'\n'"HEAD: $(git log -n 1 --oneline)"$'\n'$'\n'"Build started $(date +'%Y%m%d %H%M %Z')"
+  echo -e "\n$cyan#######################################################################$nc"
+  echo -e "$brown(i)Build started at $DATE$nc"
+  make $CONFIG $THREAD
+time  make $THREAD 2>&1 | tee buildlog.txt
+  spin[0]="$blue-"
+  spin[1]="\\"
+  spin[2]="|"
+  spin[3]="/$nc"
 
-	CFLAG=-j$(nproc)
-	muke
+  echo -ne "$blue[...] ${spin[0]}$nc"
+  while kill -0 $pid &>/dev/null
+  do
+    for i in "${spin[@]}"
+    do
+          echo -ne "\b$i"
+          sleep 0.1
+    done
+  done
+  if ! [ -a $(grep Image.gz-dtb bu*log* | cut -d / -f 4) ]; then
+    echo -e "\n$brown(!)Kernel compilation success.$nc"
+    #$TELEGRAM "(!)Kernel compiled successfully."
+    echo -e "$cyan#######################################################################$nc"
+    cd $ZIP_DIR
+    make clean &>/dev/null
+    cp $KERN_IMG $ZIP_DIR
+    make &>/dev/null
+    $TELEGRAM -f $ZIP "$(cat $KERNEL_DIR/out/include/generated/uts*)"$'\n'$'\n'"$(cat $KERNEL_DIR/out/include/generated/comp*h | grep gcc*)"
+    cd ..
+    mv bu*log* buildlog-$(ls Any*/m*zip | cut -d / -f 2 | cut -d . -f 1).txt
+    $TELEGRAM -f $LOG
+    rm bu*log*txt
+  exit 1
+ fi
+  echo -e "\n$red(i)Kernel compiled failed.$nc"
+  $TELEGRAM -f buildlog*.txt "(!)Kernel compilation failed."
+  echo -e "$red#######################################################################$nc"
+ exit 1
+#fi
 
-	if [[ -f $KERNEL_DIR/$COMPILER/arch/arm64/boot/Image.gz-dtb ]]; then
-		if [[ "$CAM_LIB" == "" ]]; then
-			CAM=OLD-CAM
-		else
-			CAM=$CAM_LIB
-		fi
 
-		source $COMPILER/.config
-		FINAL_ZIP="$DEVICE$CAM_LIB$CONFIG_LOCALVERSION-${COMPILER}_LTO-`date +"%H%M"`"
-		cd $ZIP_DIR
-		cp $KERNEL_DIR/$COMPILER/arch/arm64/boot/Image.gz-dtb $ZIP_DIR/
-		sed -i "s/demo1/$DEVICE/g" $AKSH
-		if [[ "$DEVICE2" ]]; then
-			sed -i "/device.name1/ a device.name2=$DEVICE2" $AKSH
-		fi
-		zip -r9 "$FINAL_ZIP".zip * -x README.md *placeholder zipsigner*
-		java -jar zipsigner* "$FINAL_ZIP.zip" "$FINAL_ZIP-signed.zip"
-		FINAL_ZIP="$FINAL_ZIP-signed.zip"
-		telegram-send --file $ZIP_DIR/$FINAL_ZIP
-		rm *.zip Image.gz-dtb
-		sed -i "s/$DEVICE/demo1/g" $AKSH
-		if [[ "$DEVICE2" ]]; then
-			sed -i "/device.name2/d" $AKSH
-		fi
+if [ "$choice" == "2" ]; then
+  echo -e "\n$cyan#######################################################################$nc"
+  make $CONFIG
+  cp .config arch/arm64/configs/$CONFIG
+  echo -e "$purple(i)Defconfig generated.$nc"
+  echo -e "$cyan#######################################################################$nc"
+fi
 
-		BUILD_END=$(date +"%s")
-		DIFF=$(($BUILD_END - $BUILD_START))
 
-		cd $KERNEL_DIR
-		COMPILER_NAME="$($C_PATH/bin/$CC --version 2>/dev/null | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')"
+if [ "$choice" == "3" ]; then
+  echo -e "\n$cyan#######################################################################$nc"
+  rm -f $KERN_IMG
+  make clean
+  make mrproper
+  echo -e "$purple(i)Kernel source cleaned up.$nc"
+  echo -e "$cyan#######################################################################$nc"
+fi
 
-		telegram-send --disable-web-page-preview --format html "\
-		**************Atom-X-Kernel**************
-		Compiler: <code>$COMPILER</code>
-		Compiler-name: <code>$COMPILER_NAME</code>
-		Linux Version: <code>$(make kernelversion)</code>
-		Builder Version: <code>$VERSION</code>
-		Maintainer: <code>$USER</code>
-		Device: <code>$DEVICENAME</code>
-		Codename: <code>$DEVICE</code>
-		Camlib: <code>$CAM</code>
-		Build Date: <code>$(date +"%Y-%m-%d %H:%M")</code>
-		Build Duration: <code>$(($DIFF / 60)).$(($DIFF % 60)) mins</code>
-		Changelog: <a href='$SOURCE'> Here </a>"
-	else
-		telegram-send "Error⚠️ $COMPILER failed to build"
-		exit 1
-	fi
+if [ "$choice" == "4" ]; then
+ exit 1
+fi
+done
