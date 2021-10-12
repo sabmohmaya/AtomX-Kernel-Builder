@@ -1,5 +1,5 @@
 kind: pipeline
-name: AtomX Drone
+name: Kernel Drone
 
 steps:
  - name: compile
