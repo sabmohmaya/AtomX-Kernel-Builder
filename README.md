@@ -1,8 +1,5 @@
 # Kernel Builder
 
-## Build status ##
-[![Build Status](https://cloud.drone.io/api/badges/Divyanshu-Modi/AtomX-Kernel-Builder/status.svg?ref=refs/heads/main)](https://cloud.drone.io/Divyanshu-Modi/AtomX-Kernel-Builder)
-
 ## What this is ##
 ---------------------------------------------------------------------
 This script help's one to automate his/her kernel build process.
